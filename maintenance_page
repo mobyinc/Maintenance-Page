@@ -1,0 +1,37 @@
+server {
+  listen   80;
+  server_name  maintenance_page donut;
+  access_log  /var/log/nginx/maintenance_page.access.log;
+  root   /srv/www/maintenance_page/current/;
+
+  location /health_check.html {
+    index health_check.html;
+  }
+
+  location / {
+    return 503;
+  }
+
+  # Block all svn access
+  if ($request_uri ~* ^.*\.svn.*$) {
+     return 404;
+  }
+
+  # Block all git access
+  if ($request_uri ~* ^.*\.git.*$) {
+     return 404;
+  }
+
+  location /nginx_status {
+    stub_status on;
+    access_log off;
+    allow 127.0.0.1;
+    deny all;
+  }
+
+  error_page 503 @maintenance;
+  location @maintenance {
+    rewrite ^(.*)$ /index.html break;
+  }
+
+}
