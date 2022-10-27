@@ -1,0 +1,11 @@
+version: "3.5"
+
+services:
+  maintenance:
+    image: mobyinc/maintenance
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: maintenance-page
+    ports:
+      - 8080:80
